@@ -91,6 +91,14 @@ class ProjectionService : Service() {
     private fun startProjection(code: Int, data: Intent) {
         val mgr = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
         projection = mgr.getMediaProjection(code, data)
+        // Android 14+ 要求使用 MediaProjection 前注册 Callback（否则 createVirtualDisplay 抛异常）
+        try {
+            projection?.registerCallback(object : MediaProjection.Callback() {
+                override fun onStop() {
+                    handler.post { stopSelf() }
+                }
+            }, handler)
+        } catch (_: Throwable) {}
         val d = display ?: return
         val realW = d.mode?.physicalWidth ?: width
         val realH = d.mode?.physicalHeight ?: height
@@ -99,7 +107,8 @@ class ProjectionService : Service() {
         // 签名: (name, width, height, dpi, flags, surface, callback, handler) —— flags 在 surface 前
         vDisplay = projection?.createVirtualDisplay(
             "jieqi_capture", realW, realH, density,
-            DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, surface, null, null
+            DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, surface,
+            object : android.hardware.display.VirtualDisplay.Callback() {}, null
         )
         handler.post(runnable)
         Log.d(TAG, "投影已启动 ${realW}x${realH}")
