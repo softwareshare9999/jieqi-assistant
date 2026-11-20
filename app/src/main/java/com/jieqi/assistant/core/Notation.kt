@@ -17,10 +17,11 @@ object Notation {
         val name = NAME[if (isDark) 'x' else piece.code.uppercaseChar()] ?: "子"
         val prefix = if (isDark) "暗$name" else name
         val fromFile = fileNum(mv.fromCol, red)
+        val toFile = fileNum(mv.toCol, red)
         return when {
-            mv.fromRow == mv.toRow -> "$prefix$fromFile平${fileNum(mv.toCol, red)}"
-            (mv.toRow - mv.fromRow) * (if (red) -1 else 1) > 0 -> "$prefix$fromFile进${fileNum(mv.toCol, red)}"
-            else -> "$prefix$fromFile退${fileNum(mv.toCol, red)}"
+            mv.fromRow == mv.toRow -> "${prefix}${fromFile}平${toFile}"
+            (mv.toRow - mv.fromRow) * (if (red) -1 else 1) > 0 -> "${prefix}${fromFile}进${toFile}"
+            else -> "${prefix}${fromFile}退${toFile}"
         }
     }
 }
