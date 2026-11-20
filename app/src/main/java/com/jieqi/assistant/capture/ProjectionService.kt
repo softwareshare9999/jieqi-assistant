@@ -96,10 +96,10 @@ class ProjectionService : Service() {
         val realH = d.mode?.physicalHeight ?: height
         imageReader = ImageReader.newInstance(realW, realH, ImageFormat.RGB_565, 2)
         val surface: Surface = imageReader!!.surface
+        // 签名: (name, width, height, dpi, flags, surface, callback, handler) —— flags 在 surface 前
         vDisplay = projection?.createVirtualDisplay(
-            name = "jieqi_capture", width = realW, height = realH, densityDpi = density,
-            surface = surface, flags = DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
-            callback = null, handler = null
+            "jieqi_capture", realW, realH, density,
+            DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, surface, null, null
         )
         handler.post(runnable)
         Log.d(TAG, "投影已启动 ${realW}x${realH}")
