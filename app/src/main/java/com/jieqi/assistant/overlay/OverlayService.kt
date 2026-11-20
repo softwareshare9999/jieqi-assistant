@@ -97,7 +97,7 @@ class OverlayService : Service() {
             diag(if (on) "自动落子已开" else "仅提示模式")
         }
         // 拖动悬浮窗
-        var sx = 0; var sy = 0
+        var sx = 0f; var sy = 0f
         view.setOnTouchListener { v, e ->
             when (e.action) {
                 MotionEvent.ACTION_DOWN -> { sx = e.rawX - params!!.x; sy = e.rawY - params!!.y }
