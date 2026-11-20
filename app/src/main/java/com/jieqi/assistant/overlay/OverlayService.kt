@@ -132,7 +132,7 @@ class OverlayService : Service() {
         val movesText = cands.joinToString("\n") { "${it.notation}  ${String.format("%.2f", it.score)}" }
         main.post {
             binding?.tvMoves?.text = movesText
-            binding?.tvDiag?.text = "$mode模式 · ${diagText}"
+            binding?.tvDiag?.text = "${mode}模式 · ${diagText}"
             if (cands.isNotEmpty()) {
                 val mv = com.jieqi.assistant.core.Move.fromUci(cands[0].uci, false)
                 binding?.boardMini?.setBoard(res.board.snapshot(),
