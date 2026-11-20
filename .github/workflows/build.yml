@@ -39,20 +39,30 @@ jobs:
       - name: Build Pikajie engine with NDK
         run: |
           set -e
-          NDK=/usr/local/lib/android/sdk/ndk/27.2.12479018
-          if [ ! -d "$NDK" ]; then NDK=$(ls -d /usr/local/lib/android/sdk/ndk/* 2>/dev/null | tail -1); fi
+          NDK="${ANDROID_NDK_HOME:-${ANDROID_NDK_LATEST_HOME:-}}"
+          if [ -z "$NDK" ] || [ ! -d "$NDK" ]; then
+            NDK=$(ls -d /usr/local/lib/android/sdk/ndk/* 2>/dev/null | sort -V | tail -1)
+          fi
           echo "NDK=$NDK"
-          export PATH="$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH"
+          test -d "$NDK" || { echo "::error::NDK not found"; exit 1; }
+          BINPATH="$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin"
+          export PATH="$BINPATH:$PATH"
+          # Makefile 固定调用 aarch64-linux-android21-clang++，确保存在
+          if [ ! -f "$BINPATH/aarch64-linux-android21-clang++" ]; then
+            BASE=$(ls "$BINPATH"/aarch64-linux-android-clang++ 2>/dev/null | head -1)
+            ln -sf "$BASE" "$BINPATH/aarch64-linux-android21-clang++"
+          fi
+          ls -l "$BINPATH"/aarch64-linux-android*21-clang++ | head -3
 
           # 拉 jieqi_old 分支源码
           git clone --depth 1 --branch jieqi_old https://github.com/official-pikafish/Pikafish.git /tmp/pikajie
           cd /tmp/pikajie/src
 
-          # NDK 交叉编译：aarch64-linux-android21-clang++，静态链接
-          make -j4 build ARCH=arm64 COMP=aarch64-linux-android21-clang \
-            EXTRACXXFLAGS="-static-libstdc++" 2>&1 | tail -30
+          # NDK 交叉编译：Makefile 原生支持 COMP=ndk + ARCH=armv8
+          # 产物名 PikaJieQi（jieqi_old 分支）
+          make -j4 build ARCH=armv8 COMP=ndk 2>&1 | tail -40
 
-          BIN=$(find /tmp/pikajie -maxdepth 2 -type f -name 'pikafish' | head -1)
+          BIN=$(find /tmp/pikajie -maxdepth 2 -type f -name 'PikaJieQi' | head -1)
           echo "BIN=$BIN"
           test -n "$BIN"
           file "$BIN"
