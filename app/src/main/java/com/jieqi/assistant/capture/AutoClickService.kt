@@ -1,6 +1,8 @@
 package com.jieqi.assistant.capture
 
 import android.accessibilityservice.AccessibilityService
+import android.accessibilityservice.AccessibilityService.GestureDescription
+import android.accessibilityservice.AccessibilityService.GestureResultCallback
 import android.graphics.Path
 import android.os.Build
 import android.os.Handler
