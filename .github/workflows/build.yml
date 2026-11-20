@@ -1,0 +1,97 @@
+name: Build Jieqi Assistant APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      # ---------- 下载 JJ 象棋 ONNX 识别模型（8.5MB，不入库） ----------
+      - name: Fetch ONNX piece model
+        run: |
+          mkdir -p app/src/main/assets/model
+          curl -L --retry 3 -o app/src/main/assets/model/jj_piece.onnx \
+            "https://raw.githubusercontent.com/YoungerIOS/chess-helper-app/main/app/models/jj_piece_model.onnx"
+          ls -lh app/src/main/assets/model/jj_piece.onnx
+          test $(stat -c%s app/src/main/assets/model/jj_piece.onnx) -gt 1000000
+
+      # ---------- NDK 编译 Pikajie（Pikafish jieqi_old 分支）为 arm64 可执行 ----------
+      - name: Build Pikajie engine with NDK
+        run: |
+          set -e
+          NDK=/usr/local/lib/android/sdk/ndk/27.2.12479018
+          if [ ! -d "$NDK" ]; then NDK=$(ls -d /usr/local/lib/android/sdk/ndk/* 2>/dev/null | tail -1); fi
+          echo "NDK=$NDK"
+          export PATH="$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH"
+
+          # 拉 jieqi_old 分支源码
+          git clone --depth 1 --branch jieqi_old https://github.com/official-pikafish/Pikafish.git /tmp/pikajie
+          cd /tmp/pikajie/src
+
+          # NDK 交叉编译：aarch64-linux-android21-clang++，静态链接
+          make -j4 build ARCH=arm64 COMP=aarch64-linux-android21-clang \
+            EXTRACXXFLAGS="-static-libstdc++" 2>&1 | tail -30
+
+          BIN=$(find /tmp/pikajie -maxdepth 2 -type f -name 'pikafish' | head -1)
+          echo "BIN=$BIN"
+          test -n "$BIN"
+          file "$BIN"
+          mkdir -p $GITHUB_WORKSPACE/app/src/main/assets/engine
+          cp "$BIN" $GITHUB_WORKSPACE/app/src/main/assets/engine/pikajie
+          chmod +x $GITHUB_WORKSPACE/app/src/main/assets/engine/pikajie
+
+          # NNUE 权重：从官方包提取
+          cd /tmp
+          curl -L --retry 3 -o pk.7z "https://github.com/official-pikafish/Pikafish/releases/download/Pikafish-2026-09-06/Pikafish.2026-09-06.7z" || true
+          if command -v 7z >/dev/null && [ -f pk.7z ]; then
+            7z e -y -o/tmp/pknn pk.7z '*nnue*' '*.nnue' 2>/dev/null || true
+            NN=$(find /tmp/pknn -type f -iname '*.nnue' | head -1)
+            if [ -n "$NN" ]; then
+              cp "$NN" $GITHUB_WORKSPACE/app/src/main/assets/engine/pikafish.nnue
+              echo "NNUE packed: $(du -h $GITHUB_WORKSPACE/app/src/main/assets/engine/pikafish.nnue)"
+            fi
+          fi
+          ls -lh $GITHUB_WORKSPACE/app/src/main/assets/engine/
+
+      - name: Build APK
+        run: ./gradlew assembleRelease --no-daemon
+
+      - name: Locate APK
+        id: apk
+        run: |
+          APK=$(find app/build/outputs/apk/release -name '*.apk' | head -1)
+          echo "path=$APK" >> $GITHUB_OUTPUT
+          cp "$APK" app-release.apk
+          ls -lh app-release.apk
+
+      - name: Publish Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.0-${{ github.run_number }}
+          name: 揭棋助手 v1.0.0-${{ github.run_number }}
+          files: app-release.apk
+          body: |
+            纯Android揭棋辅助：MediaProjection截图 + ONNX识别 + Pikajie揭棋引擎 + 无障碍自动落子。
+            首次使用：授权投屏→悬浮窗→无障碍→框选棋盘→启动。详见 README。
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

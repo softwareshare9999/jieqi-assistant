@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:fillViewport="true">
+    <LinearLayout android:orientation="vertical" android:padding="20dp"
+        android:layout_width="match_parent" android:layout_height="wrap_content">
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="JJ 揭棋助手" android:textSize="24sp" android:textStyle="bold"
+            android:gravity="center" android:paddingBottom="6dp" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="纯 Android · 无需 Root · MediaProjection 截图 + ONNX 识别 + 揭棋引擎"
+            android:textSize="12sp" android:gravity="center" android:paddingBottom="18dp" />
+
+        <TextView android:id="@+id/tvStatus" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="状态：未启动"
+            android:textSize="14sp" android:background="#F5F5F5" android:padding="12dp" />
+
+        <Button android:id="@+id/btnProjection" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="1. 授权投屏截图" android:layout_marginTop="14dp" />
+        <Button android:id="@+id/btnOverlay" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="2. 开启悬浮窗权限" />
+        <Button android:id="@+id/btnA11y" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="3. 开启无障碍（自动落子）" />
+        <Button android:id="@+id/btnRoi" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="4. 框选棋盘区域" />
+        <Button android:id="@+id/btnStart" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="启动辅助" android:backgroundTint="#B22222"
+            android:textColor="#FFFFFF" android:layout_marginTop="10dp" />
+        <Button android:id="@+id/btnStop" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="停止辅助" />
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="18dp" android:textSize="12sp" android:textColor="#666666"
+            android:text="首次使用：依次完成 1→4，然后打开 JJ 象棋进入揭棋对局，点「启动辅助」。\n悬浮窗显示识别到的棋盘与推荐走法。免责声明：仅供学习研究，勿用于违规用途。" />
+    </LinearLayout>
+</ScrollView>

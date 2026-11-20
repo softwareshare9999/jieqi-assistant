@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">揭棋助手</string>
+    <string name="a11y_desc">揭棋助手需要无障碍权限来执行自动落子手势（仅在你主动开启自动落子后生效）</string>
+    <string name="channel_name">揭棋助手服务</string>
+    <string name="overlay_label">揭棋辅助面板</string>
+</resources>
