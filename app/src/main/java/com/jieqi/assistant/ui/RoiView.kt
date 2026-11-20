@@ -64,7 +64,7 @@ class RoiView @JvmOverloads constructor(
         when (e.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 dragCorner = corners(c).indexOfFirst {
-                    Math.hypot(it.first - e.x, it.second - e.y) < handleR * 2
+                    Math.hypot((it.first - e.x).toDouble(), (it.second - e.y).toDouble()) < (handleR * 2).toDouble()
                 }
                 return dragCorner >= 0
             }
