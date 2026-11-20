@@ -99,7 +99,7 @@ class ProjectionService : Service() {
         vDisplay = projection?.createVirtualDisplay(
             "jieqi_capture", realW, realH, density, surface,
             DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, null, null
-        )
+        ) // 8 参数：name,width,height,densityDpi,surface,flags,callback,handler
         handler.post(runnable)
         Log.d(TAG, "投影已启动 ${realW}x${realH}")
     }
