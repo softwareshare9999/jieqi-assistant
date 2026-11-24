@@ -23,12 +23,6 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          api-level: 34
-          build-tools: '34.0.0'
-
       - name: Make gradlew executable
         run: chmod +x gradlew
 
@@ -113,9 +107,9 @@ jobs:
             exit 1
           fi
 
-          APKSIGNER="$ANDROID_HOME/build-tools/34.0.0/apksigner"
-          if [ ! -x "$APKSIGNER" ]; then
-            echo "::error::apksigner not found at $APKSIGNER"
+          APKSIGNER=$(find "$ANDROID_HOME/build-tools" -maxdepth 2 -type f -name apksigner -print 2>/dev/null | sort -V | tail -1)
+          if [ -z "$APKSIGNER" ]; then
+            echo "::error::apksigner not found under $ANDROID_HOME/build-tools"
             exit 1
           fi
 
