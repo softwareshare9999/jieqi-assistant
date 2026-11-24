@@ -1,12 +1,13 @@
 package com.jieqi.assistant.engine
 
+import android.content.Context
 import com.jieqi.assistant.core.*
 
 /**
  * 走法分析：优先引擎 bestmove；引擎不可用时按揭棋开局位置生成合法兜底走法。
  * 揭棋暗子按"所在初始位置对应的棋子类型"走（兵位前进、车位直走、马位走日…）。
  */
-class MoveAnalyzer(private val engine: UciEngine?) {
+class MoveAnalyzer(private val ctx: Context, private val engine: UciEngine?) {
 
     data class Candidate(val uci: String, val notation: String, val score: Float)
 
@@ -19,7 +20,7 @@ class MoveAnalyzer(private val engine: UciEngine?) {
                 val mv = Move.fromUci(bm, flip)
                 if (mv != null) {
                     val from = board.get(mv.fromRow, mv.fromCol)
-                    val notation = Notation.cn(board, mv, from)
+                    val notation = Notation.format(ctx, board, mv, from)
                     return listOf(Candidate(bm, notation, 1f))
                 }
             }
@@ -43,7 +44,7 @@ class MoveAnalyzer(private val engine: UciEngine?) {
                     val mv = Move(r, c, tr, tc)
                     val flip = ourSide == 'b'
                     val uci = mv.toUci(flip)
-                    out.add(Candidate(uci, Notation.cn(board, mv, p), 0.5f))
+                    out.add(Candidate(uci, Notation.format(ctx, board, mv, p), 0.5f))
                 }
             }
         }

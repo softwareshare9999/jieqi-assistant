@@ -7,5 +7,5 @@
     <Button android:id="@+id/btnSaveRoi"
         android:layout_width="match_parent" android:layout_height="wrap_content"
         android:layout_gravity="bottom" android:layout_margin="16dp"
-        android:text="保存棋盘区域" android:backgroundTint="#B22222" android:textColor="#FFFFFF" />
+        android:text="@string/btn_save_roi" android:backgroundTint="#B22222" android:textColor="#FFFFFF" />
 </FrameLayout>

@@ -5,16 +5,16 @@
     android:background="#DDF8F8F8" android:padding="8dp">
 
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="揭棋辅助" android:textSize="13sp" android:textStyle="bold"
+        android:text="@string/panel_title" android:textSize="13sp" android:textStyle="bold"
         android:gravity="center" android:textColor="#B22222" />
 
     <LinearLayout android:orientation="horizontal" android:layout_width="match_parent"
         android:layout_height="wrap_content" android:gravity="center" android:layout_marginTop="4dp">
         <ToggleButton android:id="@+id/toggleAssist" android:layout_width="0dp" android:layout_weight="1"
-            android:layout_height="36dp" android:textOn="自动辅助 开" android:textOff="自动辅助 关"
+            android:layout_height="36dp" android:textOn="@string/toggle_assist_on" android:textOff="@string/toggle_assist_off"
             android:textSize="11sp" />
         <ToggleButton android:id="@+id/toggleAutoMove" android:layout_width="0dp" android:layout_weight="1"
-            android:layout_height="36dp" android:textOn="自动落子 开" android:textOff="自动落子 关"
+            android:layout_height="36dp" android:textOn="@string/toggle_move_on" android:textOff="@string/toggle_move_off"
             android:textSize="11sp" android:layout_marginLeft="4dp" />
     </LinearLayout>
 

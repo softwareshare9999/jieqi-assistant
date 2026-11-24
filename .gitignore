@@ -12,4 +12,5 @@ app/build/
 app/src/main/assets/model/*.onnx
 app/src/main/assets/engine/*.so
 app/src/main/assets/engine/pikafish
+app/src/main/assets/engine/pikajie
 app/src/main/assets/engine/*.nnue

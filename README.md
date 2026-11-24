@@ -45,9 +45,25 @@
 Push 到 `main` 或手动触发 Actions，`build.yml` 会：
 1. 下载 JJ 象棋 ONNX 模型（来自 YoungerIOS/chess-helper-app，不入仓库）
 2. 用 Android NDK 把 Pikajie 源码编译成 arm64 可执行引擎
-3. Gradle 构建 release APK，发布到 Releases（tag `v1.0.0-<run_number>`）
+3. Gradle 构建 release APK，用 Android release keystore 签名并验证，然后发布到 Releases（tag `v1.0.0-<run_number>`）
+
+首次构建前，在 GitHub 仓库的 **Settings → Secrets and variables → Actions** 添加：
+- `ANDROID_KEYSTORE_BASE64`：release keystore 文件的 Base64 内容
+- `ANDROID_KEY_ALIAS`：keystore 中的 key alias
+- `ANDROID_KEY_PASSWORD`：keystore 和 key 的密码
+
+请安全备份 keystore 和密码，并在后续版本中持续使用同一个 key；不要将 keystore 或密码提交到仓库。未配置这些 secrets 时，发布工作流会失败，而不会上传无法安装的未签名 APK。
 
 技术栈：Kotlin / AGP 8.5.2 / ONNX Runtime Mobile 1.17.3 / targetSdk 34 / arm64-v8a。
+
+## 多语言（i18n）
+
+界面文案、Toast、通知、悬浮窗开关与走法记谱均已资源化：
+- 默认语言：越南语（`app/src/main/res/values/strings.xml`）
+- 中文：`app/src/main/res/values-zh/strings.xml`
+- 走法记谱随语言切换（越南语如「Pháo 2 bình 5」，中文如「炮二平五」）；棋盘上的棋子仍用 PNG 贴图，不参与翻译。
+
+系统语言为中文时使用中文，其他语言（含英语）回退到默认越南语。新增语言只需添加对应 `values-<lang>/strings.xml` 并保持键名一致。
 
 ## 换皮肤重训模型
 

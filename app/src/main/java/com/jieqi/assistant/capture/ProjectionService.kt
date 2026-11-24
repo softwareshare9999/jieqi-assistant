@@ -149,8 +149,8 @@ class ProjectionService : Service() {
 
     private fun buildNotification(): Notification {
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("揭棋助手截图中")
-            .setContentText("正在读取棋盘，可在通知栏停止")
+            .setContentTitle(getString(R.string.notif_projection_title))
+            .setContentText(getString(R.string.notif_projection_text))
             .setSmallIcon(R.drawable.ic_stat_notify)
             .setOngoing(true)
             .build()

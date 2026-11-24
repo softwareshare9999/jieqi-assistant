@@ -48,8 +48,8 @@ class MainActivity : AppCompatActivity() {
         val ov = Settings.canDrawOverlays(this)
         val a11y = isA11yOn()
         val proj = ProjectionService.instance != null
-        tvStatus.text = "状态：投屏${if (proj) "✓" else "✗"} · 悬浮窗${if (ov) "✓" else "✗"} · " +
-                "无障碍${if (a11y) "✓" else "✗"} · 棋盘${if (roi) "✓" else "✗"}"
+        fun mark(on: Boolean) = if (on) "✓" else "✗"
+        tvStatus.text = getString(R.string.status_line, mark(proj), mark(ov), mark(a11y), mark(roi))
     }
 
     private fun requestProjection() {
@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
                 putExtra(ProjectionService.EXTRA_RESULT_DATA, data)
             }
             if (Build.VERSION.SDK_INT >= 26) startForegroundService(i) else startService(i)
-            Toast.makeText(this, "投屏截图已授权", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.toast_projection_granted, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         if (!Settings.canDrawOverlays(this)) {
             val i = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
             startActivity(i)
-        } else Toast.makeText(this, "悬浮窗权限已开启", Toast.LENGTH_SHORT).show()
+        } else Toast.makeText(this, R.string.toast_overlay_enabled, Toast.LENGTH_SHORT).show()
     }
 
     private fun openA11y() {
@@ -93,17 +93,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startAssist() {
-        if (!Settings.canDrawOverlays(this)) { Toast.makeText(this, "请先开启悬浮窗权限", Toast.LENGTH_SHORT).show(); return }
-        if (RoiConfig.load(this) == null) { Toast.makeText(this, "请先框选棋盘", Toast.LENGTH_SHORT).show(); return }
-        if (ProjectionService.instance == null) { Toast.makeText(this, "请先授权投屏截图", Toast.LENGTH_SHORT).show(); return }
+        if (!Settings.canDrawOverlays(this)) { Toast.makeText(this, R.string.toast_need_overlay, Toast.LENGTH_SHORT).show(); return }
+        if (RoiConfig.load(this) == null) { Toast.makeText(this, R.string.toast_need_roi, Toast.LENGTH_SHORT).show(); return }
+        if (ProjectionService.instance == null) { Toast.makeText(this, R.string.toast_need_projection, Toast.LENGTH_SHORT).show(); return }
         val i = Intent(this, com.jieqi.assistant.overlay.OverlayService::class.java)
         if (Build.VERSION.SDK_INT >= 26) startForegroundService(i) else startService(i)
-        Toast.makeText(this, "辅助已启动，切到 JJ 象棋对局", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, R.string.toast_started, Toast.LENGTH_SHORT).show()
     }
 
     private fun stopAssist() {
         stopService(Intent(this, com.jieqi.assistant.overlay.OverlayService::class.java))
         stopService(Intent(this, ProjectionService::class.java))
-        Toast.makeText(this, "已停止", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, R.string.toast_stopped, Toast.LENGTH_SHORT).show()
     }
 }

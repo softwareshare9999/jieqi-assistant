@@ -23,6 +23,12 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          api-level: 34
+          build-tools: '34.0.0'
+
       - name: Make gradlew executable
         run: chmod +x gradlew
 
@@ -86,13 +92,41 @@ jobs:
       - name: Build APK
         run: ./gradlew assembleRelease --no-daemon
 
-      - name: Locate APK
-        id: apk
+      - name: Sign release APK
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
-          APK=$(find app/build/outputs/apk/release -name '*.apk' | head -1)
-          echo "path=$APK" >> $GITHUB_OUTPUT
-          cp "$APK" app-release.apk
-          ls -lh app-release.apk
+          set -euo pipefail
+          : "${ANDROID_KEYSTORE_BASE64:?Missing Actions secret ANDROID_KEYSTORE_BASE64}"
+          : "${ANDROID_KEY_ALIAS:?Missing Actions secret ANDROID_KEY_ALIAS}"
+          : "${ANDROID_KEY_PASSWORD:?Missing Actions secret ANDROID_KEY_PASSWORD}"
+
+          KEYSTORE_PATH="$RUNNER_TEMP/release-keystore.jks"
+          trap 'rm -f "$KEYSTORE_PATH"' EXIT
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$KEYSTORE_PATH"
+
+          APK_PATH=$(find app/build/outputs/apk/release -type f -name '*-unsigned.apk' -print -quit)
+          if [ -z "$APK_PATH" ]; then
+            echo "::error::Unsigned release APK not found"
+            exit 1
+          fi
+
+          APKSIGNER="$ANDROID_HOME/build-tools/34.0.0/apksigner"
+          if [ ! -x "$APKSIGNER" ]; then
+            echo "::error::apksigner not found at $APKSIGNER"
+            exit 1
+          fi
+
+          "$APKSIGNER" sign \
+            --ks "$KEYSTORE_PATH" \
+            --ks-key-alias "$ANDROID_KEY_ALIAS" \
+            --ks-pass env:ANDROID_KEY_PASSWORD \
+            --key-pass env:ANDROID_KEY_PASSWORD \
+            --out app-release.apk \
+            "$APK_PATH"
+          "$APKSIGNER" verify --verbose app-release.apk
 
       - name: Publish Release
         uses: softprops/action-gh-release@v2

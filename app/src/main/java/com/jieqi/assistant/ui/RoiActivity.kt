@@ -28,7 +28,7 @@ class RoiActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnSaveRoi).setOnClickListener {
             val c = roiView.getConfig() ?: return@setOnClickListener
             RoiConfig.save(this, c)
-            Toast.makeText(this, "棋盘区域已保存", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.toast_roi_saved, Toast.LENGTH_SHORT).show()
             finish()
         }
     }

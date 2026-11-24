@@ -59,6 +59,7 @@ class OverlayService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        diagText = getString(R.string.diag_waiting)
         createChannel()
         startForeground(NOTIFY_ID, buildNotification())
         initEngineAndVision()
@@ -72,7 +73,7 @@ class OverlayService : Service() {
         engine = UciEngine(this)
         val ok = engine?.prepare() ?: false
         Log.d("Overlay", "引擎准备=${ok}")
-        analyzer = MoveAnalyzer(engine)
+        analyzer = MoveAnalyzer(this, engine)
     }
 
     private fun addOverlay() {
@@ -90,11 +91,11 @@ class OverlayService : Service() {
         binding?.toggleAssist?.setOnCheckedChangeListener { _, on ->
             assistOn = on
             if (!on) { lastFp = ""; stable.reset() }
-            diag(if (on) "自动辅助已开，等待稳定帧" else "已暂停")
+            diag(if (on) getString(R.string.diag_assist_on) else getString(R.string.diag_paused))
         }
         binding?.toggleAutoMove?.setOnCheckedChangeListener { _, on ->
             autoMoveOn = on
-            diag(if (on) "自动落子已开" else "仅提示模式")
+            diag(if (on) getString(R.string.diag_automove_on) else getString(R.string.diag_hint_only))
         }
         // 拖动悬浮窗
         var sx = 0f; var sy = 0f
@@ -113,13 +114,13 @@ class OverlayService : Service() {
 
     private fun onFrame(bmp: Bitmap) {
         if (!assistOn) return
-        val r = recognizer ?: run { diag("识别器未就绪，检查模型/ROI"); return }
+        val r = recognizer ?: run { diag(getString(R.string.diag_no_recognizer)); return }
         if (!stable.update(bmp)) return // 稳定帧门控
 
         val res = r.recognize(bmp)
         val fp = res.board.fingerprint()
-        val stats = "有子${res.board.countPieces()} 暗${res.board.countDark()} 红${res.board.countRed()}" +
-                (if (res.suspects > 0) " 存疑${res.suspects}" else "")
+        val stats = getString(R.string.stats_pieces, res.board.countPieces(), res.board.countDark(), res.board.countRed()) +
+                (if (res.suspects > 0) getString(R.string.stats_suspect, res.suspects) else "")
         main.post { binding?.tvStats?.text = stats }
 
         // 局面没变 -> 不重复分析/落子
@@ -128,11 +129,11 @@ class OverlayService : Service() {
         val an = analyzer ?: return
         val cands = an.analyze(res.board, DarkPool().apply { rebuildFrom(res.board) }, 'r', false)
         pendingCandidates = cands
-        val mode = if (engine?.ready == true) "引擎" else "统计"
+        val mode = if (engine?.ready == true) getString(R.string.mode_engine) else getString(R.string.mode_stats)
         val movesText = cands.joinToString("\n") { "${it.notation}  ${String.format("%.2f", it.score)}" }
         main.post {
             binding?.tvMoves?.text = movesText
-            binding?.tvDiag?.text = "${mode}模式 · ${diagText}"
+            binding?.tvDiag?.text = getString(R.string.diag_mode, mode, diagText)
             if (cands.isNotEmpty()) {
                 val mv = com.jieqi.assistant.core.Move.fromUci(cands[0].uci, false)
                 binding?.boardMini?.setBoard(res.board.snapshot(),
@@ -154,11 +155,11 @@ class OverlayService : Service() {
         }
         val a = pt(mv.fromCol, mv.fromRow); val b = pt(mv.toCol, mv.toRow)
         AutoClickService.instance?.performMove(a[0], a[1], b[0], b[1]) { ok ->
-            main.post { diag(if (ok) "已落子 $uci" else "落子失败：检查无障碍") }
-        } ?: main.post { diag("无障碍服务未开，无法落子") }
+            main.post { diag(if (ok) getString(R.string.diag_moved, uci) else getString(R.string.diag_move_failed)) }
+        } ?: main.post { diag(getString(R.string.diag_no_a11y)) }
     }
 
-    @Volatile private var diagText = "等待画面"
+    @Volatile private var diagText = ""
     private fun diag(t: String) { diagText = t; main.post { binding?.tvDiag?.text = t } }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -174,7 +175,7 @@ class OverlayService : Service() {
     }
 
     private fun buildNotification(): Notification = NotificationCompat.Builder(this, CHANNEL_ID)
-        .setContentTitle("揭棋辅助运行中").setContentText("悬浮窗显示识别与走法")
+        .setContentTitle(getString(R.string.notif_overlay_title)).setContentText(getString(R.string.notif_overlay_text))
         .setSmallIcon(R.drawable.ic_stat_notify).setOngoing(true).build()
 
     override fun onDestroy() {

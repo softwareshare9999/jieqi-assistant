@@ -1,7 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">揭棋助手</string>
-    <string name="a11y_desc">揭棋助手需要无障碍权限来执行自动落子手势（仅在你主动开启自动落子后生效）</string>
-    <string name="channel_name">揭棋助手服务</string>
-    <string name="overlay_label">揭棋辅助面板</string>
+    <string name="app_name">Trợ lý Jieqi</string>
+    <string name="a11y_desc">Trợ lý Jieqi cần quyền trợ năng để thực hiện thao tác tự động đi cờ (chỉ hoạt động khi bạn chủ động bật tự động đi cờ)</string>
+    <string name="channel_name">Dịch vụ Trợ lý Jieqi</string>
+    <string name="overlay_label">Bảng trợ lý Jieqi</string>
+
+    <!-- Màn hình chính -->
+    <string name="main_title">JJ Trợ lý Jieqi</string>
+    <string name="main_subtitle">Android thuần · Không cần Root · Chụp màn hình MediaProjection + nhận diện ONNX + engine Jieqi</string>
+    <string name="status_idle">Trạng thái: chưa khởi động</string>
+    <string name="btn_projection">1. Cấp quyền chụp màn hình</string>
+    <string name="btn_overlay">2. Bật quyền cửa sổ nổi</string>
+    <string name="btn_a11y">3. Bật trợ năng (tự động đi cờ)</string>
+    <string name="btn_roi">4. Chọn vùng bàn cờ</string>
+    <string name="btn_start">Bắt đầu hỗ trợ</string>
+    <string name="btn_stop">Dừng hỗ trợ</string>
+    <string name="main_help">Lần đầu sử dụng: thực hiện lần lượt 1→4, sau đó mở ván cờ Jieqi trong JJ Xiangqi và nhấn \"Bắt đầu hỗ trợ\".\nCửa sổ nổi hiển thị bàn cờ đã nhận diện và nước đi gợi ý. Miễn trừ trách nhiệm: chỉ dùng cho học tập và nghiên cứu, không dùng cho mục đích vi phạm.</string>
+    <string name="btn_save_roi">Lưu vùng bàn cờ</string>
+    <string name="status_line">Trạng thái: Chụp màn hình %1$s · Cửa sổ nổi %2$s · Trợ năng %3$s · Bàn cờ %4$s</string>
+
+    <!-- Bảng nổi -->
+    <string name="panel_title">Trợ lý Jieqi</string>
+    <string name="toggle_assist_on">Tự động BẬT</string>
+    <string name="toggle_assist_off">Tự động TẮT</string>
+    <string name="toggle_move_on">Đi cờ BẬT</string>
+    <string name="toggle_move_off">Đi cờ TẮT</string>
+
+    <!-- Thông báo ngắn -->
+    <string name="toast_projection_granted">Đã cấp quyền chụp màn hình</string>
+    <string name="toast_overlay_enabled">Quyền cửa sổ nổi đã bật</string>
+    <string name="toast_need_overlay">Vui lòng bật quyền cửa sổ nổi trước</string>
+    <string name="toast_need_roi">Vui lòng chọn vùng bàn cờ trước</string>
+    <string name="toast_need_projection">Vui lòng cấp quyền chụp màn hình trước</string>
+    <string name="toast_started">Đã bật hỗ trợ, hãy chuyển sang ván cờ Jieqi trong JJ</string>
+    <string name="toast_stopped">Đã dừng</string>
+    <string name="toast_roi_saved">Đã lưu vùng bàn cờ</string>
+
+    <!-- Thông báo hệ thống -->
+    <string name="notif_projection_title">Trợ lý Jieqi đang chụp màn hình</string>
+    <string name="notif_projection_text">Đang đọc bàn cờ, có thể dừng từ thanh thông báo</string>
+    <string name="notif_overlay_title">Trợ lý Jieqi đang chạy</string>
+    <string name="notif_overlay_text">Cửa sổ nổi hiển thị nhận diện và nước đi</string>
+
+    <!-- Dòng chẩn đoán -->
+    <string name="diag_assist_on">Đã bật hỗ trợ tự động, đang chờ khung hình ổn định</string>
+    <string name="diag_paused">Đã tạm dừng</string>
+    <string name="diag_automove_on">Đã bật tự động đi cờ</string>
+    <string name="diag_hint_only">Chế độ chỉ gợi ý</string>
+    <string name="diag_waiting">Đang chờ hình ảnh</string>
+    <string name="diag_no_recognizer">Bộ nhận diện chưa sẵn sàng, kiểm tra model/ROI</string>
+    <string name="diag_mode">Chế độ %1$s · %2$s</string>
+    <string name="diag_moved">Đã đi %1$s</string>
+    <string name="diag_move_failed">Đi cờ thất bại: kiểm tra trợ năng</string>
+    <string name="diag_no_a11y">Chưa bật dịch vụ trợ năng, không thể đi cờ</string>
+    <string name="stats_pieces">Có %1$d quân · %2$d úp · %3$d đỏ</string>
+    <string name="stats_suspect"> · nghi ngờ %1$d</string>
+    <string name="mode_engine">Engine</string>
+    <string name="mode_stats">Thống kê</string>
+
+    <!-- Ký hiệu nước đi -->
+    <string name="notation_format">%1$s %2$s %3$s %4$s</string>
+    <string name="notation_dark">Úp %1$s</string>
+    <string name="notation_flat">bình</string>
+    <string name="notation_forward">tiến</string>
+    <string name="notation_backward">thoái</string>
+    <string name="piece_r">Xe</string>
+    <string name="piece_n">Mã</string>
+    <string name="piece_b">Tượng</string>
+    <string name="piece_a">Sĩ</string>
+    <string name="piece_c">Pháo</string>
+    <string name="piece_p">Tốt</string>
+    <string name="piece_k">Tướng</string>
+    <string name="piece_unknown">Quân</string>
+    <string-array name="notation_red_digits">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+    </string-array>
 </resources>

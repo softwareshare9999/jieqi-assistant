@@ -1,27 +1,36 @@
 package com.jieqi.assistant.core
 
-/** 中文记谱，如「炮二平五」「暗车九进一」 */
+import android.content.Context
+import com.jieqi.assistant.R
+
+/** 记谱：文案取自资源，默认越南语，中文见 values-zh。如「Pháo 2 bình 5」「炮二平五」 */
 object Notation {
-    private val CN_NUM = arrayOf("零", "一", "二", "三", "四", "五", "六", "七", "八", "九")
-    private val NAME = mapOf(
-        'R' to "车", 'N' to "马", 'B' to "相", 'A' to "仕",
-        'C' to "炮", 'P' to "兵", 'K' to "帅", 'x' to "暗", 'X' to "暗"
-    )
 
-    /** 红方列号从左到右=九..一；黑方=1..9（用阿拉伯数字简化黑方） */
-    private fun fileNum(col: Int, red: Boolean): String = if (red) CN_NUM[9 - col] else (col + 1).toString()
-
-    fun cn(board: BoardModel, mv: Move, piece: Piece): String {
+    fun format(ctx: Context, board: BoardModel, mv: Move, piece: Piece): String {
         val red = piece.isRed
         val isDark = piece.isDark
-        val name = NAME[if (isDark) 'x' else piece.code.uppercaseChar()] ?: "子"
-        val prefix = if (isDark) "暗$name" else name
-        val fromFile = fileNum(mv.fromCol, red)
-        val toFile = fileNum(mv.toCol, red)
-        return when {
-            mv.fromRow == mv.toRow -> "${prefix}${fromFile}平${toFile}"
-            (mv.toRow - mv.fromRow) * (if (red) -1 else 1) > 0 -> "${prefix}${fromFile}进${toFile}"
-            else -> "${prefix}${fromFile}退${toFile}"
+        val name = ctx.getString(pieceNameRes(piece.code))
+        val prefix = if (isDark) ctx.getString(R.string.notation_dark, name) else name
+        val digits = ctx.resources.getStringArray(R.array.notation_red_digits)
+        fun fileNum(col: Int): String = if (red) digits.getOrElse(9 - col) { (col + 1).toString() } else (col + 1).toString()
+        val fromFile = fileNum(mv.fromCol)
+        val toFile = fileNum(mv.toCol)
+        val action = when {
+            mv.fromRow == mv.toRow -> R.string.notation_flat
+            (mv.toRow - mv.fromRow) * (if (red) -1 else 1) > 0 -> R.string.notation_forward
+            else -> R.string.notation_backward
         }
+        return ctx.getString(R.string.notation_format, prefix, fromFile, ctx.getString(action), toFile)
+    }
+
+    private fun pieceNameRes(code: Char): Int = when (code.uppercaseChar()) {
+        'R' -> R.string.piece_r
+        'N' -> R.string.piece_n
+        'B' -> R.string.piece_b
+        'A' -> R.string.piece_a
+        'C' -> R.string.piece_c
+        'P' -> R.string.piece_p
+        'K' -> R.string.piece_k
+        else -> R.string.piece_unknown
     }
 }

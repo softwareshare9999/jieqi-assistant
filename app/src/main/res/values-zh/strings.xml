@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">揭棋助手</string>
+    <string name="a11y_desc">揭棋助手需要无障碍权限来执行自动落子手势（仅在你主动开启自动落子后生效）</string>
+    <string name="channel_name">揭棋助手服务</string>
+    <string name="overlay_label">揭棋辅助面板</string>
+
+    <string name="main_title">JJ 揭棋助手</string>
+    <string name="main_subtitle">纯 Android · 无需 Root · MediaProjection 截图 + ONNX 识别 + 揭棋引擎</string>
+    <string name="status_idle">状态：未启动</string>
+    <string name="btn_projection">1. 授权投屏截图</string>
+    <string name="btn_overlay">2. 开启悬浮窗权限</string>
+    <string name="btn_a11y">3. 开启无障碍（自动落子）</string>
+    <string name="btn_roi">4. 框选棋盘区域</string>
+    <string name="btn_start">启动辅助</string>
+    <string name="btn_stop">停止辅助</string>
+    <string name="main_help">首次使用：依次完成 1→4，然后打开 JJ 象棋进入揭棋对局，点「启动辅助」。\n悬浮窗显示识别到的棋盘与推荐走法。免责声明：仅供学习研究，勿用于违规用途。</string>
+    <string name="btn_save_roi">保存棋盘区域</string>
+    <string name="status_line">状态：投屏%1$s · 悬浮窗%2$s · 无障碍%3$s · 棋盘%4$s</string>
+
+    <string name="panel_title">揭棋辅助</string>
+    <string name="toggle_assist_on">自动辅助 开</string>
+    <string name="toggle_assist_off">自动辅助 关</string>
+    <string name="toggle_move_on">自动落子 开</string>
+    <string name="toggle_move_off">自动落子 关</string>
+
+    <string name="toast_projection_granted">投屏截图已授权</string>
+    <string name="toast_overlay_enabled">悬浮窗权限已开启</string>
+    <string name="toast_need_overlay">请先开启悬浮窗权限</string>
+    <string name="toast_need_roi">请先框选棋盘</string>
+    <string name="toast_need_projection">请先授权投屏截图</string>
+    <string name="toast_started">辅助已启动，切到 JJ 象棋对局</string>
+    <string name="toast_stopped">已停止</string>
+    <string name="toast_roi_saved">棋盘区域已保存</string>
+
+    <string name="notif_projection_title">揭棋助手截图中</string>
+    <string name="notif_projection_text">正在读取棋盘，可在通知栏停止</string>
+    <string name="notif_overlay_title">揭棋辅助运行中</string>
+    <string name="notif_overlay_text">悬浮窗显示识别与走法</string>
+
+    <string name="diag_assist_on">自动辅助已开，等待稳定帧</string>
+    <string name="diag_paused">已暂停</string>
+    <string name="diag_automove_on">自动落子已开</string>
+    <string name="diag_hint_only">仅提示模式</string>
+    <string name="diag_waiting">等待画面</string>
+    <string name="diag_no_recognizer">识别器未就绪，检查模型/ROI</string>
+    <string name="diag_mode">%1$s模式 · %2$s</string>
+    <string name="diag_moved">已落子 %1$s</string>
+    <string name="diag_move_failed">落子失败：检查无障碍</string>
+    <string name="diag_no_a11y">无障碍服务未开，无法落子</string>
+    <string name="stats_pieces">有子%1$d 暗%2$d 红%3$d</string>
+    <string name="stats_suspect"> 存疑%1$d</string>
+    <string name="mode_engine">引擎</string>
+    <string name="mode_stats">统计</string>
+
+    <string name="notation_format">%1$s%2$s%3$s%4$s</string>
+    <string name="notation_dark">暗%1$s</string>
+    <string name="notation_flat">平</string>
+    <string name="notation_forward">进</string>
+    <string name="notation_backward">退</string>
+    <string name="piece_r">车</string>
+    <string name="piece_n">马</string>
+    <string name="piece_b">相</string>
+    <string name="piece_a">仕</string>
+    <string name="piece_c">炮</string>
+    <string name="piece_p">兵</string>
+    <string name="piece_k">帅</string>
+    <string name="piece_unknown">子</string>
+    <string-array name="notation_red_digits">
+        <item>零</item>
+        <item>一</item>
+        <item>二</item>
+        <item>三</item>
+        <item>四</item>
+        <item>五</item>
+        <item>六</item>
+        <item>七</item>
+        <item>八</item>
+        <item>九</item>
+    </string-array>
+</resources>
